@@ -29,14 +29,9 @@ class Solution:
         while (size_one > size_two):
             size_one -= 1
         while (size_two < size_one):
-            size_two -= 1
-        #print(size_one, size_two)
-        
-        #print(size_one)
+            size_two -= 1        
         while (size_one >= 0 and (one[size_one].val != two[size_one].val)):
             size_one -= 1
-        #print(one)
-        #print(two)
         if (size_one >= 0):
             return (one[size_one])
         return (None)
