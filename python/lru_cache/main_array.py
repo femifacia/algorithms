@@ -1,44 +1,47 @@
 #!/usr/bin/env python3
 
 from os import remove
-
+from collections import  deque
 
 class LRUCache:
 
     def __init__(self, capacity: int):
         self.size = capacity
-        self.arr = [-1] * capacity
+        self.used = deque()
         self.dict = {}
-        self.index = 0
-        self.index_dic = {}
         self.count = 0
 
     def get(self, key: int) -> int:
-        #print(self.dict)
         if key in self.dict:
-            return (self.dict[key])[-1]
+            if (key in self.used):
+                self.used.remove(key)
+            self.used.append(key)
+            return (self.dict[key])
         else:
             return (-1)
 
     def put(self, key: int, value: int) -> None:
-        if (self.count <= self.size - 1):
-            self.dict[key] = self.dict.get(key, []) + [value]
-            self.index_dic[self.index] = key
-            self.index += 1 if (self.index + 1 <self.size ) else 0
+        #print(self.used)
+        if (key in self.dict):
+            if (key in self.used):
+                self.used.remove(key)
+            self.dict[key] = value
+            self.used.append(key)
+        elif (self.count < self.size):
+            self.used.append(key)
+            self.dict[key] = value
             self.count +=1
         else:
+            evict = self.used.popleft()
+            del self.dict[evict]
+            if (evict in self.used):
+                self.used.remove(evict)
+            self.dict[key] = value
+            self.used.append(key)
 #            print("put",self.dict, "key",key, value, 'val')
 #                print("hum", self.index)
-            if (self.index_dic[self.index] in self.dict):
-                if self.dict[self.index_dic[self.index]]:
-                    self.dict[self.index_dic[self.index]].pop()
-                if not self.dict[self.index_dic[self.index]]:
-                    del self.dict[self.index_dic[self.index]]
                 #del self.dict[self.index_dic[self.index]]
-            self.dict[key] = [value] + self.dict.get(key, [])
 #                del self.index_dic[self.index]
-            self.index_dic[self.index] = key
-            self.index = self.index - 1 if (self.index > 0) else self.size - 1
 #            print("putend",self.dict, "key",key, value, 'val')
 
 
