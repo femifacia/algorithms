@@ -7,12 +7,17 @@ class ListNode:
          self.next = next
 class Solution:
 
-    def reverse(self, head):
-        if (not head.next):
-            return (head)
-        tmp = self.reverse(head.next)
-        tmp.next = head
-        return (tmp)
+    def reverseList(self, head: ListNode) -> ListNode:
+        if (head == None):
+            return (None)
+        tmp_next = head.next
+        head.next = None
+        while (tmp_next):
+            tmp_next_next = tmp_next.next
+            tmp_next.next = head
+            head = tmp_next
+            tmp_next= tmp_next_next
+        return (head)
 
     def isPalindrome(self, head: ListNode) -> bool:
         if (head == None):
@@ -21,7 +26,7 @@ class Solution:
         while (fast and fast.next):
             slow = slow.next
             fast = fast.next.next
-        slow = self.reverse(slow)
+        slow = self.reverseList(slow)
         print(slow.val)
         while (slow):
             if (slow.val != head.val):
