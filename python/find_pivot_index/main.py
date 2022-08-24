@@ -5,13 +5,10 @@ class Solution:
         left = 0
         maxx = right = sum(nums[1:])
         if (right == 0):
-            return (0)
-        
+            return (0)        
         i = 1
         size = len(nums)
-#        right -= nums[0]
         while (left != right and i + 1< size):
-            #print(left, right, i)
             left += nums[i-1]
             right -= nums[i]
             i+=1
