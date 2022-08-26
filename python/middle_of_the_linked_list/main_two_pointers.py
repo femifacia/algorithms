@@ -12,9 +12,7 @@ class Solution:
         speed = head
         while (speed and speed.next):
             head = head.next
-            speed = speed.next
-            if (speed):
-                speed = speed.next
+            speed = speed.next.next
         return (head)
 
 sol = Solution()
