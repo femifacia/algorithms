@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from os import remove
-from collections import  deque
 
 class LRUCache:
 
@@ -17,41 +16,64 @@ class LRUCache:
         self.size = capacity
         self.head = None
         self.tail = None
+        #so the least recently used val is the head
+        #and the last used is the right
         self.dict = {}
         self.count = 0
+    
+    def toTheEnd(self, node : NodeList):
+
+        #this function send a node at the time
+        #the node can be created for the first time or not it will be perfectly linked
+
+        if not self.head:
+            self.head = node
+        elif node == self.head and not self.tail:
+            return
+        elif not self.tail:
+            self.tail = node
+            self.head.next = node
+            node.prev = self.head
+        elif node != self.tail:
+            if (node == self.head):
+                self.head = self.head.next
+                if (self.head):
+                    self.head.prev = None
+            prev_tmp = node.prev
+            next_tmp = node.next
+            if (next_tmp):
+                next_tmp.prev = prev_tmp
+            if (prev_tmp):
+                prev_tmp.next = next_tmp
+            node.prev = self.tail
+            self.tail.next = node
+            node.next = None
+            self.tail = node
 
     def get(self, key: int) -> int:
         if key in self.dict:
-            if (key in self.used):
-                self.used.remove(key)
-            self.used.append(key)
-            return (self.dict[key])
+            self.toTheEnd(self.dict[key])
+            return (self.dict[key].val)
         else:
             return (-1)
 
     def put(self, key: int, value: int) -> None:
-        #print(self.used)
         if (key in self.dict):
-            if (key in self.used):
-                self.used.remove(key)
             self.dict[key].val = value
-            self.used.append(key)
+            self.toTheEnd(self.dict[key])
         elif (self.count < self.size):
-            self.used.append(key)
-            self.dict[key] = value
+            node = self.NodeList(key, value)
+            self.dict[key] = node
+            self.toTheEnd(node)
             self.count +=1
         else:
-            evict = self.used.popleft()
-            del self.dict[evict]
-            if (evict in self.used):
-                self.used.remove(evict)
-            self.dict[key] = value
-            self.used.append(key)
-#            print("put",self.dict, "key",key, value, 'val')
-#                print("hum", self.index)
-                #del self.dict[self.index_dic[self.index]]
-#                del self.index_dic[self.index]
-#            print("putend",self.dict, "key",key, value, 'val')
+            evict = self.head
+            del self.dict[evict.key]
+            evict.key = key
+            evict.val = value
+            self.dict[key] = evict
+            self.head = evict.next
+            self.toTheEnd(evict)
 
 
 
