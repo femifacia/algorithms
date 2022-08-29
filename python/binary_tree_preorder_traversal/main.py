@@ -5,6 +5,8 @@ class TreeNode:
         self.val = val
         self.left = left
         self.right = right
+
+
 class Solution:
     def preorderTraversal(self, root) -> list[int]:
         if (root == None):
