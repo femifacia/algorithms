@@ -2,15 +2,20 @@
 
 from os import remove
 
+#LFU CACHE Sah it was something
+
 class LFUCache:
+
+#I Will use a linked list. To be more accurate a map of linked lists
+#At each level of counter, we host the head and the tail of the list of all element which have same count
+#when w
 
     class NodeList:
 
-        def __init__(self, key, val, index = 0, prev=None, nextt=None) -> None:
+        def __init__(self, key, val, prev=None, nextt=None) -> None:
             self.key = key
             self.val= val
             self.counter = 1
-            self.index = index
             self.prev = prev
             self.next = nextt
             pass
@@ -25,9 +30,7 @@ class LFUCache:
     def __init__(self, capacity: int):
         self.size = capacity
         self.head = None
-        self.tail = None
         self.dict = {}
-        self.counter_max = 0
         self.dict_counter_nbr = {}
         self.dict_counter_head = {}
         self.dict_counter_tail = {}
@@ -42,7 +45,6 @@ class LFUCache:
             self.dict_counter_head[node.counter] = node
             self.dict_counter_tail[node.counter] = node
             self.dict_counter_nbr[node.counter] = 1
-            self.counter_max = 1
         elif not 1 in self.dict_counter_head:
             node.next = self.head if evict_next == None else evict_next
             self.head.prev = node
