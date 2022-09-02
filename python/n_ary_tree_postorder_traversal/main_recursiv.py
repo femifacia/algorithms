@@ -17,7 +17,7 @@ class Solution:
             self.dfs(i, res)
         res.append(root.val)
 
-    def preorder(self, root: 'Node') -> list[int]:
+    def postorder(self, root: 'Node') -> list[int]:
         res = []
         if (root == None):
             return ([])
