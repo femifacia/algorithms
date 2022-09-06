@@ -10,14 +10,14 @@ class Node:
 
 class Solution:
     def preorder(self, root: 'Node') -> list[int]:
-        res = []
         if (root == None):
             return ([])
         to_see = [root]
+        res = []
         while (to_see):
             curr = to_see.pop()
             res.append(curr.val)
             if curr.children:
-                for j in range(len(curr.children) - 1, -1, -1):
-                    to_see.append(curr.children[j])
-        return (res)
+                for j in curr.children:
+                    to_see.append(j)
+        return (res[::-1])

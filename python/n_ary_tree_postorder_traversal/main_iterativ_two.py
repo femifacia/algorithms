@@ -10,17 +10,17 @@ class Node:
 
 class Solution:
     def preorder(self, root: 'Node') -> list[int]:
-        res = []
         if (root == None):
             return ([])
         to_see = [root]
-        to_see_curr = []
+        res = []
         while (to_see):
             curr = to_see.pop()
             res.append(curr.val)
+            #we append children from the most left to the most right
+            #so when we unpopit the order is parent ,right, left
             if curr.children:
                 for j in curr.children:
-                    to_see_curr = [j] + to_see_curr
-                to_see += to_see_curr
-                to_see_curr = []
-        return (res)
+                    to_see.append(j)
+        #we return the stack reversed so at the end it is, left, right, parent
+        return (res[::-1])
