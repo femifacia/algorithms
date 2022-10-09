@@ -27,6 +27,7 @@ class union_find:
             #remember, the rank is the maximal depth of a tree if there were no compression
             self.rank[parent_x] += 1
             self.parent[parent_y] = parent_x
+        #we put the three with the lower rank under the one with the higher rank
         elif self.rank[parent_x] > self.rank[parent_y]:
             self.parent[parent_y] = parent_x
         else:
