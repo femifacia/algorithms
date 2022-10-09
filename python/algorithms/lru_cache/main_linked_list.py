@@ -10,7 +10,6 @@ class LRUCache:
             self.val= val
             self.prev = prev
             self.next = nextt
-            pass
 
     def __init__(self, capacity: int):
         self.size = capacity
@@ -56,6 +55,7 @@ class LRUCache:
             return (self.dict[key].val)
         else:
             return (-1)
+
 
     def put(self, key: int, value: int) -> None:
         if (key in self.dict):

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 # Definition for singly-linked list.
+
+#complexité en temps 
+#complexité en espace
 class ListNode:
      def __init__(self, val=0, next=None):
          self.val = val
@@ -28,6 +31,7 @@ list2 = ListNode(100)
 list1.next = ListNode(10, ListNode(20, ListNode(40, ListNode(360, ListNode(425)))))
 list2.next = ListNode(200, ListNode(300, ListNode(400)))
 list1 = ListNode(10, ListNode(20, ListNode(30)))
+
 def printTree(liste):
     while (liste):
         print(liste.val, end="")
