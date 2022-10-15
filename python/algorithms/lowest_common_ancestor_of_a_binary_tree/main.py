@@ -5,6 +5,8 @@ class TreeNode:
          self.val = x
          self.left = left
          self.right = right
+     def __str__(self):
+        return (str(self.val))
 
 class Solution:
 
@@ -26,6 +28,8 @@ class Solution:
         two = self.genealogie(root, q)
         size_one = len(one) - 1
         size_two = len(two) - 1
+        print(one)
+        print(two)
         while (size_one > size_two):
             size_one -= 1
         while (size_two < size_one):
