@@ -14,7 +14,6 @@ class Solution:
         red_seen = [0] * (n + 1)
         seenArr = [red_seen, blue_seen]
         ans = [-1] * n
-        ans[0] = 0
         for i, j in redEdges:
             redGraph[i].append(j)
         for i, j in blueEdges:
@@ -27,14 +26,15 @@ class Solution:
             blue_seen[i] = 1
             ans[i] = 1
             to_see.append((i, 1, 1))
+        ans[0] = 0
         while (to_see):
             current, dist, graph = to_see.pop()
             for i in graphArr[graphIndx[graph]][current]:
-                if ans[i] == -1:
+                if ans[i] == -1 or dist + 1< ans[i]:
                     ans[i] = dist + 1
                 if seenArr[graphIndx[graph]][i] == 0:
                     seenArr[graphIndx[graph]][i] = 1
-                    to_see.append((i, dist + 1, graphIndx[graph]))
+                    to_see.appendleft((i, dist + 1, graphIndx[graph]))
         return (ans)
 
 sol = Solution()
