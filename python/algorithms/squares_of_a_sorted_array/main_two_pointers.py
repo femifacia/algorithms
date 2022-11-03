@@ -6,7 +6,6 @@ class Solution:
         right = len(nums) - 1
         ans = []
         while left <= right:
-            #left_num, right_num = nums[left] ** 2, nums[right] **2
             if (abs(nums[right]) > abs(nums[left])):
                 ans = [nums[right] ** 2] + ans
                 right-=1
