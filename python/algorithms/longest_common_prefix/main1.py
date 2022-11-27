@@ -2,6 +2,7 @@
 
 class Solution:
     def longestCommonPrefix(self, strs: list[str]) -> str:
+
         size = len(strs)
         min_size = min(len(i) for i in strs)
         pref = ""
