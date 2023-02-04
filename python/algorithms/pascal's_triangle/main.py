@@ -20,4 +20,4 @@ class Solution:
                 left = middle + 1
             else:
                 right = middle
-        return left
+        return left 

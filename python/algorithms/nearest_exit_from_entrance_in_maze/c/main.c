@@ -1,21 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+
+char **cut_str_array(char *str, char c);
+char *get_file_content(char *path);
+int my_array_len(char **array);
+
 
 /**
  * Definition for a binary tree node.
  */
 
-struct Node {
+typedef struct t_node {
      int x;
      int y;
-     struct TreeNode *left;
-     struct TreeNode *right;
-};
-typedef struct t_node {
-    struct TreeNode *node;
-    struct t_node *next;
-
+     int dist;
+     struct t_node *next;
+     struct t_node *prev;
 }t_node;
 
 typedef struct queue {
@@ -24,14 +26,14 @@ typedef struct queue {
     int size;
 }t_queue;
 
-t_node *create_t_node(struct TreeNode *root)
+t_node *create_t_node(int x, int y, int dist)
 {
-    t_node *node = NULL;
-    if (root) {
-        node = (t_node *)malloc(sizeof(t_node));
-        node->next = NULL;
-        node->node = root;
-    }
+    t_node *node = (t_node *)malloc(sizeof(t_node));
+    node->next = NULL;
+    node->prev = NULL;
+    node->x = x;
+    node->y = y;
+    node->dist = dist;
     return node;
 }
 
@@ -40,7 +42,7 @@ void print_queue(t_queue *queue)
     t_node *node = queue->head;
     printf("let's print that queeeue\n");
     while (node) {
-        printf("[%d] -> ", node->node->val);
+        printf("[x = %d] [y = %d] -> ", node->x, node->y);
         node = node->next;
     }
     printf("\n");
@@ -55,10 +57,11 @@ t_node *pop_t_node(t_queue *queue)
     queue->size -= 1;
     //printf("I pop tmp val = %d, addresse = %p", (tmp) ? tmp->node->val : -1, (tmp) ? tmp : NULL);
     //print_queue(queue);
+    tmp->next = NULL;
     return tmp;
 }
 
-void add_t_node(t_queue *queue, struct TreeNode * treeNode)
+void add_t_node(t_queue *queue, t_node * node)
 {
 //    printf("[%p]\n", treeNode);
 /*    queue->tail->next = create_t_node(treeNode);
@@ -66,7 +69,6 @@ void add_t_node(t_queue *queue, struct TreeNode * treeNode)
     if (queue->head == NULL)
         queue->head = queue->tail;
         */
-    t_node *node = create_t_node(treeNode);
     if (!queue->head) {
         queue->head = node;
     } else {
@@ -79,104 +81,151 @@ void add_t_node(t_queue *queue, struct TreeNode * treeNode)
     queue->size += 1;
 }
 
-int** levelOrder(struct TreeNode* root, int* returnSize, int** returnColumnSizes){
-    int level[800][500];
-    int *columnSize = (int *)malloc(sizeof(int) * 800);
-    t_queue to_see;
+t_queue *create_queue(void)
+{
+    t_queue *queue = (t_queue *)malloc(sizeof(t_queue));
+
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->size = 0;
+    return queue;
+}
+
+void free_queue(t_queue *queue)
+{
     t_node *current = NULL;
-    int size_temp, i = 0;
 
-    to_see.head = create_t_node(root);
-    to_see.tail = NULL;
-    to_see.size = (to_see.head) ? 1 : 0;
-    while (to_see.size != 0) {
-        columnSize[i] = to_see.size;
-        size_temp = to_see.size;
-        for (int j = 0; j < size_temp; j++) {
-            current = pop_t_node(&to_see);
-            //printf("%p\n", current);
-            if (!current || !current->node) {
-                level[i][j] = 0;
-                continue;
+    while (queue->head) {
+        current = queue->head->next;
+        //printf("[%p] x = %d, y = %d\n", queue->head, queue->head->x, queue->head->y);
+        free(queue->head);
+        queue->head = current;
+    }
+    free(queue);
+}
+
+int nearestExit(char** maze, int mazeSize, int* mazeColSize, int* entrance, int entranceSize)
+{
+    int height = mazeSize;
+    int width = mazeColSize[0];
+    t_queue *to_see = create_queue();
+    t_queue *garbage = create_queue();
+    int dist = -1;
+    t_node *current = NULL;
+    int direction[][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+    int x1 = 0;
+    int y1 = 0;
+//    int visited[height][visited]
+//    printf("%d,%d\n",width, height);
+    maze[entrance[0]][entrance[1]] = '+';
+    add_t_node(to_see, create_t_node(entrance[1], entrance[0], 0));
+    while(to_see->size > 0) {
+        current = pop_t_node(to_see);
+//        print_queue(to_see);
+//        printf("hehe x = %d, y = %d\n", current->x, current->y);
+//        printf("then garbage");
+//        print_queue(garbage);
+        for (int i = 0; i < 4; i++) {
+            x1 = current->x + direction[i][0];
+            y1 = current->y + direction[i][1];
+//            printf("%d,%d\n",x1, y1);
+            if ((0 <= x1 && x1 < width) && (0 <= y1 && y1 < height) && maze[y1][x1] == '.') {
+                if (x1 == entrance[1] && entrance[0] == y1)
+                    continue;
+                if (x1 == width -1 || x1 == 0 || y1 == 0 || y1 == height - 1) {
+                    dist = current->dist + 1;
+                    to_see->size = 0;
+                    break;
+                }
+                maze[y1][x1] = '+';
+                add_t_node(to_see, create_t_node(x1, y1, current->dist + 1));
             }
-            //printf("current = %d [%p]\n", current->node->val, current->node);
-            printf("%d,%d\n",i,j);
-            level[i][j] = (current->node) ? current->node->val : 0;
-            if (current->node->left)
-                add_t_node(&to_see, current->node->left);
-            if (current->node->right)
-                add_t_node(&to_see, current->node->right);
-            free(current);
         }
-        i++;
+        add_t_node(garbage, current);
     }
-    //printf("i = %d\n", i);
-    *returnSize = i;
-    *returnColumnSizes = columnSize;
+//    print_queue(to_see);
+//    print_queue(garbage);
+    free_queue(to_see);
+    free_queue(garbage);
+    return (dist);
+}
 
-    while (to_see.head) {
-        current = to_see.head->next;
-        free(to_see.head);
-        to_see.head = current;
+int danteSolver(char** maze, int mazeSize, int* mazeColSize, int* entrance, int entranceSize)
+{
+    int height = mazeSize;
+    int width = mazeColSize[0];
+    t_queue *to_see = create_queue();
+    t_queue *garbage = create_queue();
+    int dist = -1;
+    t_node *current = NULL;
+    t_node *to_add = NULL;
+    int direction[][2] = {{1,0},{-1,0},{0,1},{0,-1}};
+    int x1 = 0;
+    int y1 = 0;
+    maze[0][0] = '1';
+    add_t_node(to_see, create_t_node(entrance[1], entrance[0], 0));
+    while(to_see->size > 0) {
+        current = pop_t_node(to_see);
+
+        for (int i = 0; i < 4; i++) {
+            x1 = current->x + direction[i][0];
+            y1 = current->y + direction[i][1];
+            if ((0 <= x1 && x1 < width) && (0 <= y1 && y1 < height) && maze[y1][x1] == '.') {
+                if (x1 == width -1 && y1 == height - 1) {
+                    dist = current->dist + 1;
+                    to_see->size = 0;
+                    maze[height-1][width-1] = 'x';
+                    break;
+                }
+                maze[y1][x1] = '1';
+                to_add = create_t_node(x1, y1, current->dist + 1);
+                to_add->prev = current;
+                add_t_node(to_see, to_add);
+            }
+        }
+        add_t_node(garbage, current);
     }
-    int **level_arr = (int **)malloc(sizeof(int *) * i);
-    for (int a = 0; a < i; a++) {
-        level_arr[a] = (int *)malloc(sizeof(int) * columnSize[a]);
-        for (int j = 0; j < columnSize[a]; j++)
-            level_arr[a][j] = level[a][j];
+    for (int i = 0; maze[i]; i++) {
+        for (int j = 0; maze[i][j]; j++) {
+            if (maze[i][j] == '1')
+                maze[i][j] = '.';
+        }
     }
-    return level_arr;
+    if (dist >= 0) {
+        while (current) {
+            maze[current->y][current->x] = 'x';
+            current = current->prev;
+        }
+    }
+    free_queue(to_see);
+    free_queue(garbage);
+    return (dist);
 }
 
-struct TreeNode *create_treenode(int val)
-{
-    struct TreeNode * node = (struct TreeNode *)malloc(sizeof(struct TreeNode));
 
-    node->left = NULL;
-    node->right = NULL;
-    node->val = val;
-    return (node);
-}
 
-void dfs_free(struct TreeNode *root)
-{
-    if (!root)
-        return;
-    dfs_free(root->left);
-    dfs_free(root->right);
-    free(root);
-}
-
-void preorder(struct TreeNode *root)
-{
-    if (!root)
-        return;
-    printf("%d\n", root->val);
-    preorder(root->left);
-    preorder(root->right);
-}
 
 int main(int argc, char **argv)
 {
-    struct TreeNode *root = create_treenode(3);
-    root->left = create_treenode(9);
-    root->right = create_treenode(20);
-    root->right->left = create_treenode(15);
-    root->right->right = create_treenode(7);
-    int returnSize = 0;
-    int *columnSizes = NULL;
+    char *file = get_file_content(argv[1]);
+    char **maze = cut_str_array(file, '\n');
+    int mazeSize = my_array_len(maze);
+    int mazeColSize = strlen(maze[0]);
+    int entreance[2] = {0, 1};
+//    char maze[][10] = {".........", ".........", "........."};
+    printf("before\n");
+    for (int i = 0; maze[i]; i++)
+        printf("%s\n", maze[i]);
+    printf("after\n");
+    printf("%d\n", danteSolver(maze, mazeSize,&mazeColSize,entreance,2));
+    for (int i = 0; maze[i]; i++)
+        printf("%s\n", maze[i]);
+//    if (0 < -1  && maze[50][50])
+//        printf("ok");
+    free(file);
 
-    int **level = levelOrder(root, &returnSize, &columnSizes);
-    preorder(root);
-    for (int i = 0; i < returnSize; i++) {
-        for (int j = 0; j < columnSizes[i]; j++)
-            printf("%d ", level[i][j]);
-        printf("\n");
-    }
-    for (int i = 0; i < 100; i++)
-        free(level[i]);
-    free(level);
-    free(columnSizes);
-    dfs_free(root);
+    for (int i = 0; maze[i]; i++)
+        free(maze[i]);
+    free(maze);
     return 0;
 }
