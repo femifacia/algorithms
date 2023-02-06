@@ -2,6 +2,8 @@
 
 from typing import List
 
+#not optimized at all
+#I wrote this before knowing heaps and sort stufffff don't judge me
 
 class ListNode:
      def __init__(self, val=0, next=None):
