@@ -154,6 +154,8 @@ int danteSolver(char** maze, int mazeSize, int* mazeColSize, int* entrance, int 
 {
     int height = mazeSize;
     int width = mazeColSize[0];
+    if (maze[entrance[0]][entrance[1]] != '*')
+        return 0;
     t_queue *to_see = create_queue();
     t_queue *garbage = create_queue();
     int dist = -1;
@@ -162,7 +164,7 @@ int danteSolver(char** maze, int mazeSize, int* mazeColSize, int* entrance, int 
     int direction[][2] = {{1,0},{-1,0},{0,1},{0,-1}};
     int x1 = 0;
     int y1 = 0;
-    maze[0][0] = '1';
+    maze[entrance[0]][entrance[1]] = '1';
     add_t_node(to_see, create_t_node(entrance[1], entrance[0], 0));
     while(to_see->size > 0) {
         current = pop_t_node(to_see);
@@ -170,11 +172,11 @@ int danteSolver(char** maze, int mazeSize, int* mazeColSize, int* entrance, int 
         for (int i = 0; i < 4; i++) {
             x1 = current->x + direction[i][0];
             y1 = current->y + direction[i][1];
-            if ((0 <= x1 && x1 < width) && (0 <= y1 && y1 < height) && maze[y1][x1] == '.') {
+            if ((0 <= x1 && x1 < width) && (0 <= y1 && y1 < height) && maze[y1][x1] == '*') {
                 if (x1 == width -1 && y1 == height - 1) {
                     dist = current->dist + 1;
                     to_see->size = 0;
-                    maze[height-1][width-1] = 'x';
+                    maze[height-1][width-1] = 'o';
                     break;
                 }
                 maze[y1][x1] = '1';
@@ -188,12 +190,12 @@ int danteSolver(char** maze, int mazeSize, int* mazeColSize, int* entrance, int 
     for (int i = 0; maze[i]; i++) {
         for (int j = 0; maze[i][j]; j++) {
             if (maze[i][j] == '1')
-                maze[i][j] = '.';
+                maze[i][j] = '*';
         }
     }
     if (dist >= 0) {
         while (current) {
-            maze[current->y][current->x] = 'x';
+            maze[current->y][current->x] = 'o';
             current = current->prev;
         }
     }
@@ -211,7 +213,7 @@ int main(int argc, char **argv)
     char **maze = cut_str_array(file, '\n');
     int mazeSize = my_array_len(maze);
     int mazeColSize = strlen(maze[0]);
-    int entreance[2] = {0, 1};
+    int entreance[2] = {0, 0};
 //    char maze[][10] = {".........", ".........", "........."};
     printf("before\n");
     for (int i = 0; maze[i]; i++)
