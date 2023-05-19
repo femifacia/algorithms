@@ -37,4 +37,3 @@ print("Before")
 printTree(list1)
 print("after")
 printTree(sol.reverseList(list1))
-#!/usr/bin/env python3
