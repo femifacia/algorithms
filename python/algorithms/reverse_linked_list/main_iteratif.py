@@ -17,6 +17,16 @@ class Solution:
             head = tmp_next
             tmp_next= tmp_next_next
         return (head)
+    #Another reverseList I made recently
+    def reverseList(self, head : ListNode) -> ListNode:
+        current = head
+        prev = None
+        while (current):
+            old_next = current.next
+            current.next = prev
+            prev = current
+            current = old_next
+        return prev
         
 sol = Solution()
 list1 = ListNode(0)
