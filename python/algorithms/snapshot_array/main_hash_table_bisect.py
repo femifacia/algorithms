@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-#Memory exceed
+#Perfect
 
 from bisect import bisect_right
 

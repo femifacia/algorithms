@@ -2,6 +2,7 @@
 
 #Memory exceed
 
+
 class SnapshotArray:
 
     def __init__(self, length: int):
