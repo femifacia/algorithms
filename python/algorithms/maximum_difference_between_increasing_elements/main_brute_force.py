@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 class Solution:
     def maximumDifference(self, nums: list[int]) -> int:
         ans = 0
