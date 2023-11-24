@@ -1,2 +1,3 @@
 # algorithms
-My algorithms
+
+My algorithms and leetcode exercises
