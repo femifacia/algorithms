@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+# We do the exact same thing than with the case of the sorted array to bst
+# but we use two pointers skill to find the middle of the list
+
 # Definition for singly-linked list.
 
 from typing import Optional
